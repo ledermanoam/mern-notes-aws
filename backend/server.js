@@ -12,10 +12,14 @@ const corsOrigin = process.env.CORS_ORIGIN || '*';
 app.use(cors({ origin: corsOrigin, credentials: true }));
 app.use(express.json());
 
-const pool = new Pool({
+let pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
 });
+
+export function setPool(newPool) {
+  pool = newPool;
+}
 
 async function ensureTable() {
   const createSql = `
@@ -95,4 +99,8 @@ async function start() {
   }
 }
 
-start();
+if (import.meta.url === `file://${process.argv[1]}`) {
+  start();
+}
+
+export { app };
