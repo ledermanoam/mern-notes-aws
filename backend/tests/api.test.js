@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import request from 'supertest';
-import { app, setPool } from '../../backend/server.js';
+import { app, setPool } from '../server.js';
 
 // Minimal in-memory mock of pg.Pool
 function createMockPool() {
