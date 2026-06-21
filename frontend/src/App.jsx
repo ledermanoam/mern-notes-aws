@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import Footer from "./Footer";
 
 const defaultApiUrl = 'http://localhost:4000/api';
 
@@ -131,6 +132,8 @@ export default function App() {
           </ul>
         )}
       </section>
+
+      <Footer />
     </main>
   );
 }
