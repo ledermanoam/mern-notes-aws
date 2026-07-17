@@ -15,6 +15,10 @@ ARTICLE.md
 **/build/
 **/.vite
 
+# Python
+__pycache__/
+.pytest_cache/
+
 # Logs
 logs
 *.log
