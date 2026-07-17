@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+env:
+  PROD_API_URL: https://63.184.245.145.sslip.io/api
+
 jobs:
   unit:
     runs-on: ubuntu-latest
@@ -87,7 +90,7 @@ jobs:
       - name: Build the frontend
         working-directory: frontend
         run: |
-          echo "VITE_API_URL=https://63.184.245.145.sslip.io/api" > .env.production
+          echo "VITE_API_URL=${PROD_API_URL}" > .env.production
           npm ci
           npm run build
       - name: Configure AWS credentials
@@ -99,3 +102,19 @@ jobs:
       - name: Deploy to S3
         working-directory: frontend
         run: aws s3 sync dist/ s3://notes-frontend-lederman-2026 --delete
+
+  smoke-prod:
+    needs: deploy
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Python test dependencies
+        run: pip install -r requirements.txt
+      - name: Smoke test the deployed API
+        env:
+          API_BASE_URL: ${{ env.PROD_API_URL }}
+        run: pytest tests/test_smoke.py -v
