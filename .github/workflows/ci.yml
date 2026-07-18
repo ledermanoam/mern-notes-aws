@@ -77,7 +77,7 @@ jobs:
       - name: Install Python test dependencies
         run: pip install -r requirements.txt
       - name: Run the tests
-        run: pytest --ignore=tests/e2e
+        run: pytest tests/local --ignore=tests/local/e2e
 
   e2e-local:
     runs-on: ubuntu-latest
@@ -137,7 +137,7 @@ jobs:
       - name: Install Playwright browsers
         run: playwright install --with-deps chromium
       - name: Run E2E tests
-        run: pytest tests/e2e --base-url=http://localhost:5173
+        run: pytest tests/local/e2e --base-url=http://localhost:5173
 
   deploy:
     needs: [unit, test, e2e-local]
@@ -178,7 +178,7 @@ jobs:
       - name: Smoke test the deployed API
         env:
           API_BASE_URL: ${{ env.PROD_API_URL }}
-        run: pytest tests/test_smoke.py -v
+        run: pytest tests/aws/test_smoke.py -v
 
   e2e-prod:
     needs: deploy
@@ -196,4 +196,4 @@ jobs:
       - name: E2E smoke against deployed frontend
         env:
           EXPECTED_API_URL: ${{ env.PROD_API_URL }}
-        run: pytest tests/e2e/test_smoke.py --base-url=${{ env.PROD_FRONTEND_URL }} -v
+        run: pytest tests/aws/e2e/test_smoke.py --base-url=${{ env.PROD_FRONTEND_URL }} -v
